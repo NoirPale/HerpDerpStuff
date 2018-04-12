@@ -25,9 +25,6 @@
 /***************************** Include files ********************************/
 
 /*****************************    Defines    ********************************/
-#define STATE_INIT      0
-#define STATE_IDLE      1
-#define STATE_READING   2
 
 /********************** External declaration of Variables *******************/
 

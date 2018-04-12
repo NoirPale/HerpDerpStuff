@@ -38,7 +38,6 @@ typedef unsigned char  SEM;        //
 #define TASK_READY              1
 #define TASK_WAIT_FOR_TIMEOUT   2   // bit 1
 #define TASK_WAIT_FOR_SEMAPHORE 4   // bit 2
-#define TASK_MESAGE             8
 
 #define QUEUE_SIZE   128
 
@@ -46,7 +45,6 @@ typedef unsigned char  SEM;        //
 #define EVENT_TIMEOUT 1
 #define EVENT_SIGNAL  2
 #define EVENT_RESET   3
-#define EVENT_MESSAGE 4
 
 #define WAIT_FOREVER  0
 

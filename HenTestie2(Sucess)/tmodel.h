@@ -42,8 +42,6 @@
 // -----------
 #define SEM_LCD          USER_SEM
 #define SEM_RTC_UPDATED  USER_SEM+1
-#define SEM_KEY_RECEIVED USER_SEM+2
-#define SEM_KEY_RTC_STOP USER_SEM+3
 
 
 // Shared State Memory.

@@ -171,19 +171,18 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
  ******************************************************************************/
 {
     static INT8U i = 0;
-    static INT8U inbuff[9];
+    static INT8U inbuff[7];
     INT8U ch;
 
     if (get_queue( Q_KEYBOARD, &ch, WAIT_FOREVER))
     {
-        if (i < 7)
+        if (i < 6)
             inbuff[i++] = ch;
         if (ch == '*')
         {
-            i = 1;
-            inbuff[0] = ch;
+            i = 0;
         }
-        if ((ch == '#') || (i >= 7))
+        if ((ch == '#') || (i >= 6))
         {
             set_hour((inbuff[1] - '0') * 10 + inbuff[2] - '0');
             set_min((inbuff[3] - '0') * 10 + inbuff[4] - '0');
