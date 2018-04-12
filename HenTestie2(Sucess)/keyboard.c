@@ -236,60 +236,6 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
         break;
     }
     wait_sem(SEM_KEY_RECEIVED, WAIT_FOREVER);
-    //return message;
-    /*if (!(read_count == 0))
-     wait_sem(SEM_KEY_RTC_STOP, WAIT_FOREVER);
-
-     if (wait_sem(SEM_KEY_RECEIVED, WAIT_FOREVER))
-     {
-     else if (get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER))
-     {
-     wait_sem(SEM_KEY_RTC_STOP, WAIT_FOREVER);
-     if (ch == '*' && state == STATE_IDLE)
-     {
-     state = STATE_READING;
-     read_count++;
-     }
-     else if ((read_count == 7) || (ch == '#'))
-     {
-     state = STATE_IDLE;
-     read_count = 0;
-     //signal(SEM_KEY_RTC_STOP);
-     }
-     else if (!(ch == '#') && !(ch == '*') && state == STATE_READING)
-     {
-     switch (read_count)
-     {
-     case 1:
-     inbuff[0] = ch;
-     break;
-     case 2:
-     inbuff[1] = ch;
-     set_hour((inbuff[0] - '0') * 10 + inbuff[1] - '0');
-     //signal( SEM_RTC_UPDATED);
-     break;
-     case 3:
-     inbuff[0] = ch;
-     break;
-     case 4:
-     inbuff[1] = ch;
-     set_min((inbuff[0] - '0') * 10 + inbuff[1] - '0');
-     //signal( SEM_RTC_UPDATED);
-     break;
-     case 5:
-     inbuff[0] = ch;
-     break;
-     case 6:
-     inbuff[1] = ch;
-     set_sec((inbuff[0] - '0') * 10 + inbuff[1] - '0');
-     //signal( SEM_RTC_UPDATED);
-     break;
-     default:
-     break;
-     }
-     read_count++;
-     }
-     }*/
 }
 
 /****************************** End Of Module *******************************/
