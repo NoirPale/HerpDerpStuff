@@ -29,9 +29,9 @@
 #define ast 0x41
 #define has 0x11
 #define zer 0x21
-#define one 0x46
-#define two 0x26
-#define thr 0x16
+#define one 0x48
+#define two 0x28
+#define thr 0x18
 #define fou 0x44
 #define fiv 0x24
 #define six 0x14
@@ -67,13 +67,15 @@ void keyboard_init()
 
 INT8U kp_scan(void)
 {
-    INT8U iter = 2, imask[3] = { 0x10, 0x20, 0x40 };
+    INT8U iter = 3, imask[3] = { 0x10, 0x20, 0x40 };
     INT8U mask[3] = { 0x04, 0x08, 0x10 };
     INT8U answer = 0, data = 0;
     do
     {
+        iter--;
         GPIO_PORTA_DATA_R |= mask[iter];
         data = GPIO_PORTE_DATA_R;
+        GPIO_PORTA_DATA_R &= 0x00;
         if (data)
         {
             answer += imask[iter];
@@ -81,7 +83,7 @@ INT8U kp_scan(void)
             iter = 0;
         }
     }
-    while (iter--);
+    while (iter);
     return answer;
 }
 
@@ -93,7 +95,7 @@ void keyboard_read_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
  ******************************************************************************/
 {
     static INT8U s_kp_value = 0, rep = 0, count = 0;
-    INT8U kp_value = 0, ch;
+    INT8U kp_value = 0, ch = 0x00;
     kp_value = kp_scan();
     if ((kp_value) && !(rep))
     {
@@ -154,8 +156,7 @@ void keyboard_read_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
                     break;
                 }
                 put_queue(Q_KEYBOARD, ch, WAIT_FOREVER);
-                wait(150);
-                signal(SEM_KEY_RECEIVED);
+                wait(100);
             }
 
         }
@@ -170,14 +171,12 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
  ******************************************************************************/
 {
     static INT8U i = 0;
-    static INT8U inbuff[128];
-    static INT8U state = STATE_IDLE;
-    static INT8U read_count = 0;
+    static INT8U inbuff[9];
     INT8U ch;
 
     if (get_queue( Q_KEYBOARD, &ch, WAIT_FOREVER))
     {
-        if (i < 128)
+        if (i < 7)
             inbuff[i++] = ch;
         if (ch == '*')
         {
@@ -189,72 +188,9 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
             set_hour((inbuff[1] - '0') * 10 + inbuff[2] - '0');
             set_min((inbuff[3] - '0') * 10 + inbuff[4] - '0');
             set_sec((inbuff[5] - '0') * 10 + inbuff[6] - '0');
+            i= 0 ;
         }
     }
-
-    /*
-     switch (state)
-     {
-     case STATE_INIT:
-     inbufff[0] = 0;
-     inbufff[1] = 0;
-     state = STATE_IDLE;
-     read_count = 0;
-     break;
-     case STATE_IDLE:
-     get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
-     if (ch == '*' && state == STATE_IDLE)
-     {
-     state = STATE_READING;
-     //message = 1;
-     read_count++;
-     }
-     break;
-     case STATE_READING:
-     get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
-     if ((read_count == 7) || (ch == '#'))
-     {
-     state = STATE_IDLE;
-     read_count = 0;
-     //message = 1;
-     signal( SEM_RTC_UPDATED);
-     }
-     else if (!(ch == '*'))
-     {
-     switch (read_count)
-     {
-     case 1:
-     inbufff[0] = ch;
-     break;
-     case 2:
-     inbufff[1] = ch;
-     set_hour( (inbufff[0]-'0')*10+inbufff[1]-'0');
-     break;
-     case 3:
-     inbufff[0] = ch;
-     break;
-     case 4:
-     inbufff[1] = ch;
-     set_min( (inbufff[0]-'0')*10+inbufff[1]-'0');
-     break;
-     case 5:
-     inbufff[0] = ch;
-     break;
-     case 6:
-     inbufff[1] = ch;
-     set_sec( (inbufff[0]-'0')*10+inbufff[1]-'0');
-     break;
-     default:
-     break;
-     }
-     read_count++;
-     }
-     break;
-     default:
-     break;
-     }
-     wait_sem(SEM_KEY_RECEIVED, WAIT_FOREVER);
-     */
 }
 
 /****************************** End Of Module *******************************/
