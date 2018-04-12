@@ -169,73 +169,92 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
  *   Function : Task to update RTC clock from keyboard input queues.
  ******************************************************************************/
 {
-    //INT8U message = 0;
-    static INT8U inbuff[2] ={0, 0};//, 0, 0, 0, 0 };
-    static INT8U state = STATE_INIT;
+    static INT8U i = 0;
+    static INT8U inbuff[128];
+    static INT8U state = STATE_IDLE;
     static INT8U read_count = 0;
     INT8U ch;
 
-    switch (state)
+    if (get_queue( Q_KEYBOARD, &ch, WAIT_FOREVER))
     {
-    case STATE_INIT:
-        inbuff[0] = 0;
-        inbuff[1] = 0;
-        state = STATE_IDLE;
-        read_count = 0;
-        break;
-    case STATE_IDLE:
-        get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
-        if (ch == '*' && state == STATE_IDLE)
+        if (i < 128)
+            inbuff[i++] = ch;
+        if (ch == '*')
         {
-            state = STATE_READING;
-            //message = 1;
-            read_count++;
+            i = 1;
+            inbuff[0] = ch;
         }
-        break;
-    case STATE_READING:
-        get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
-        if ((read_count == 7) || (ch == '#'))
+        if ((ch == '#') || (i >= 7))
         {
-            state = STATE_IDLE;
-            read_count = 0;
-            //message = 1;
-            signal( SEM_RTC_UPDATED);
+            set_hour((inbuff[1] - '0') * 10 + inbuff[2] - '0');
+            set_min((inbuff[3] - '0') * 10 + inbuff[4] - '0');
+            set_sec((inbuff[5] - '0') * 10 + inbuff[6] - '0');
         }
-        else if (!(ch == '*'))
-        {
-            switch (read_count)
-            {
-            case 1:
-                inbuff[0] = ch;
-                break;
-            case 2:
-                inbuff[1] = ch;
-                set_hour( (inbuff[0]-'0')*10+inbuff[1]-'0');
-                break;
-            case 3:
-                inbuff[0] = ch;
-                break;
-            case 4:
-                inbuff[1] = ch;
-                set_min( (inbuff[0]-'0')*10+inbuff[1]-'0');
-                break;
-            case 5:
-                inbuff[0] = ch;
-                break;
-            case 6:
-                inbuff[1] = ch;
-                set_sec( (inbuff[0]-'0')*10+inbuff[1]-'0');
-                break;
-            default:
-                break;
-            }
-            read_count++;
-        }
-        break;
-    default:
-        break;
     }
-    wait_sem(SEM_KEY_RECEIVED, WAIT_FOREVER);
+
+    /*
+     switch (state)
+     {
+     case STATE_INIT:
+     inbufff[0] = 0;
+     inbufff[1] = 0;
+     state = STATE_IDLE;
+     read_count = 0;
+     break;
+     case STATE_IDLE:
+     get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
+     if (ch == '*' && state == STATE_IDLE)
+     {
+     state = STATE_READING;
+     //message = 1;
+     read_count++;
+     }
+     break;
+     case STATE_READING:
+     get_queue(Q_KEYBOARD, &ch, WAIT_FOREVER);
+     if ((read_count == 7) || (ch == '#'))
+     {
+     state = STATE_IDLE;
+     read_count = 0;
+     //message = 1;
+     signal( SEM_RTC_UPDATED);
+     }
+     else if (!(ch == '*'))
+     {
+     switch (read_count)
+     {
+     case 1:
+     inbufff[0] = ch;
+     break;
+     case 2:
+     inbufff[1] = ch;
+     set_hour( (inbufff[0]-'0')*10+inbufff[1]-'0');
+     break;
+     case 3:
+     inbufff[0] = ch;
+     break;
+     case 4:
+     inbufff[1] = ch;
+     set_min( (inbufff[0]-'0')*10+inbufff[1]-'0');
+     break;
+     case 5:
+     inbufff[0] = ch;
+     break;
+     case 6:
+     inbufff[1] = ch;
+     set_sec( (inbufff[0]-'0')*10+inbufff[1]-'0');
+     break;
+     default:
+     break;
+     }
+     read_count++;
+     }
+     break;
+     default:
+     break;
+     }
+     wait_sem(SEM_KEY_RECEIVED, WAIT_FOREVER);
+     */
 }
 
 /****************************** End Of Module *******************************/

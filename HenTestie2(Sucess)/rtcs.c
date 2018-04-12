@@ -273,7 +273,6 @@ void schedule()
 *   Function : See module specification (.h-file).
 *****************************************************************************/
 {
-  INT8U mess= 0, flipflop = 1;
   while(1)
   {
     while( !ticks );
