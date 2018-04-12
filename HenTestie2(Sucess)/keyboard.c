@@ -184,9 +184,9 @@ void keyboard_update_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
         }
         if ((ch == '#') || (i >= 6))
         {
-            set_hour((inbuff[1] - '0') * 10 + inbuff[2] - '0');
-            set_min((inbuff[3] - '0') * 10 + inbuff[4] - '0');
-            set_sec((inbuff[5] - '0') * 10 + inbuff[6] - '0');
+            set_hour((inbuff[0] - '0') * 10 + inbuff[1] - '0');
+            set_min((inbuff[2] - '0') * 10 + inbuff[3] - '0');
+            set_sec((inbuff[4] - '0') * 10 + inbuff[5] - '0');
             i= 0 ;
         }
     }
