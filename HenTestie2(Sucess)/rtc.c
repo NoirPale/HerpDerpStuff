@@ -63,32 +63,29 @@ void rtc_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
  *   Function : Disable global interrupt
  ******************************************************************************/
 {
-    if (!(event == EVENT_MESSAGE))
+    switch (my_state)
     {
-        switch (my_state)
+    case 0:
+        set_state(1);
+        wait(100);
+        break;
+    case 1:
+        sec++;
+        if (sec >= 60)
         {
-        case 0:
-            set_state(1);
-            wait(100);
-            break;
-        case 1:
-            sec++;
-            if (sec >= 60)
+            min++;
+            if (min >= 60)
             {
-                min++;
-                if (min >= 60)
-                {
-                    hour++;
-                    if (hour >= 24)
-                        hour = 0;
-                    min = 0;
-                }
-                sec = 0;
+                hour++;
+                if (hour >= 24)
+                    hour = 0;
+                min = 0;
             }
-            wait(200);
-            signal( SEM_RTC_UPDATED);
-            break;
+            sec = 0;
         }
+        wait(200);
+        signal( SEM_RTC_UPDATED);
+        break;
     }
 }
 
